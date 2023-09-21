@@ -1,9 +1,17 @@
 package com.example.demo.entity;
 
+
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -24,6 +32,12 @@ public class Product {
 	@OneToOne(mappedBy = "product")
     private Item  item;
 	
+	@OneToOne(mappedBy = "product")
+	private Productdetails productdetails;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name="product_category", joinColumns = @JoinColumn(name = "productid"), inverseJoinColumns = @JoinColumn(name = "categoryid"))
+	private Set<Category> categories = new HashSet<>();
 
 
 }

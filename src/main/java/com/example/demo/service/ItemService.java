@@ -9,7 +9,6 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.example.demo.dto.ItemDTO;
 import com.example.demo.entity.Item;
 import com.example.demo.entity.Product;
@@ -42,7 +41,7 @@ public class ItemService {
 			itemRepo.save(item);
 		}
 	}
-	
+
 	public List<ItemDTO> getAllItems(){
 		List<Item> itemList=itemRepo.findAll();
 		List<ItemDTO> itemdtoList=modelMapper.map(itemList,new TypeToken<List<ItemDTO>>() {}.getType() );
@@ -65,5 +64,16 @@ public class ItemService {
 		}
 		return null;
 	}
+	
+	public int deleteItemById( long itemid) {
+		  Optional<Item> itemoptional = itemRepo.findById(itemid);
+		if(itemoptional.isPresent()) {
+		itemRepo.deleteById(itemid);
+		  return 0;
+		}else
+		  return 1;
+		  }
+	
+	
 
 }
