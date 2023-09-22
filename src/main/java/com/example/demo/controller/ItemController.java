@@ -26,9 +26,9 @@ public class ItemController {
 	ItemService itemService;
 	
 	@PostMapping("/additem")
-	public ResponseEntity addItem(@RequestBody ItemDTO itemDTO) {
+	public ResponseEntity<ItemDTO> addItem(@RequestBody ItemDTO itemDTO) {
 		itemService.addItem(itemDTO);
-		return new ResponseEntity(HttpStatus.OK);
+		return new ResponseEntity<ItemDTO>(HttpStatus.OK);
 	}
 	@GetMapping("/getAllItems")
 	public List<ItemDTO> getAllItems(){
@@ -41,7 +41,7 @@ public class ItemController {
 	}
 	
 	@DeleteMapping("/deleteitem/{itemid}")
-	public String deleteitem(@PathVariable("itemid") int itemid) {
+	public String deleteitem(@PathVariable("itemid") Long itemid) {
 	itemService.deleteItemById(itemid);
 	    return "Successfully Deleted";
 	     }

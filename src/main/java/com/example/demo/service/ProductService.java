@@ -2,8 +2,10 @@ package com.example.demo.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -11,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.ProductDTO;
+import com.example.demo.entity.Category;
 import com.example.demo.entity.Product;
+import com.example.demo.repository.CategoryRepo;
 import com.example.demo.repository.ProductRepo;
 
 @Service
@@ -20,6 +24,8 @@ public class ProductService {
 	ProductRepo productRepo;
 	@Autowired
 	ModelMapper modelMapper;
+	@Autowired
+	CategoryRepo categoryRepo;
 	
 	
 	public void addProduct(ProductDTO productDTO) {
@@ -31,8 +37,19 @@ public class ProductService {
 		  product.setCreated_at(dtf.format(now));
 		  product.setUpdated_at(dtf.format(now));
 		  
+		  Set<Category> categories=new HashSet<>();
+		  if(productDTO.getCategoryid()!=null) {
+		  
+		  Category categoryList = categoryRepo.findById(productDTO.getCategoryid())
+					.orElseThrow(() -> new RuntimeException("Error: Category is not found."));
+		  categories.add(categoryList);
+			  }
+		  product.setCategories(categories);
 		  productRepo.save(product);
-	}
+		  }
+		  
+		  
+	
 	
 	public List<ProductDTO> getAllProduct(){
 		List<Product> products=productRepo.findAll();

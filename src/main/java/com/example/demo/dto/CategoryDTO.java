@@ -6,10 +6,10 @@ import lombok.Data;
 public class CategoryDTO {
 	
 	private Long categoryid;
-	private Long parentid;
+	//private Long parentid;
 	private String title;
 	private String created_at ;
-	private String update_at ;
+	private String updated_at ;
 	
 
 }

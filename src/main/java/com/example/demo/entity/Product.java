@@ -4,6 +4,7 @@ package com.example.demo.entity;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -30,11 +31,11 @@ public class Product {
 	private String created_at;
 	private String updated_at;
 	
-	@OneToOne(mappedBy = "product")
-    private Item  item;
+//	@OneToOne(mappedBy = "product",cascade = CascadeType.ALL, orphanRemoval = true)
+//   private Item  item;
 	
-	@OneToOne(mappedBy = "product")
-	private Productdetails productdetails;
+//	@OneToOne(mappedBy = "product",cascade = CascadeType.ALL, orphanRemoval = true)
+//	private Productdetails productdetails;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="product_category", joinColumns = @JoinColumn(name = "productid"), inverseJoinColumns = @JoinColumn(name = "categoryid"))

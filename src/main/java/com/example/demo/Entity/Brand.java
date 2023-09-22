@@ -4,35 +4,20 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.Data;
 
 @Entity
 @Data
-@Table(name="item")
-public class Item {
-	
+@Table(name="brand")
+public class Brand {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long itemid;
-	private float mrp;
-	private float discount;
-	private float price;
+	private Long brandid;
+	private String title;
+	private String summary;
 	private String created_at;
 	private String updated_at;
-	
-	@OneToOne
-    @JoinColumn(name="productid")
-    private Product product;
-	
-	@OneToOne
-	@JoinColumn(name="brandid")
-	private Brand brand;
-	
-	
-	
 
 }

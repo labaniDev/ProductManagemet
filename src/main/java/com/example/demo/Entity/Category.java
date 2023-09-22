@@ -20,10 +20,10 @@ public class Category {
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 
 private Long categoryid;
-private Long parentid;
+//private Long parentid;
 private String title;
 private String created_at ;
-private String update_at ;
+private String updated_at ;
 
 @ManyToMany(mappedBy = "categories")
 private List<Product> products = new ArrayList<Product>();

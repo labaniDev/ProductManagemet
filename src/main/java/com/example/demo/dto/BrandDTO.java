@@ -1,15 +1,14 @@
 package com.example.demo.dto;
 
 import lombok.Data;
+
 @Data
-public class ProductDTO {
+public class BrandDTO {
 	
-	private Long productid;
+	private Long brandid;
 	private String title;
-	private String description;
-	private Integer type;
+	private String summary;
 	private String created_at;
 	private String updated_at;
-	private Long categoryid;
 
 }
