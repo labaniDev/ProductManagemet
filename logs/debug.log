@@ -1,2 +1,0 @@
-2023-09-22 12:47:07 [http-nio-8080-exec-1] INFO  c.e.d.controller.ProductController - ===================inside API check ===================
-2023-09-22 12:51:23 [http-nio-8080-exec-2] INFO  c.e.d.controller.ProductController - ===================inside API check ===================
