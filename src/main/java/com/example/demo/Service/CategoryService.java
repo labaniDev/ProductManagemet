@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.CategoryDTO;
 import com.example.demo.entity.Category;
+import com.example.demo.entity.Product;
 import com.example.demo.repository.CategoryRepo;
 import com.example.demo.repository.ProductRepo;
 @Service
@@ -44,14 +45,24 @@ public void createproduct(CategoryDTO categorydto){
 //	  }return "not update";
 //   } 
 
-public int deleteCategoryById(Long categoryid) {
-	 Optional<Category> categoryList=categoryRepo.findById(categoryid);
- if(categoryList.isPresent()) {
-  	categoryRepo.deleteById(categoryid);
-	  return 0;
-  }else
-	  return 1;
-  }  
+		/*
+		 * public int deleteCategoryById(Long categoryid) { Optional<Category>
+		 * categoryList=categoryRepo.findById(categoryid); if(categoryList.isPresent())
+		 * { categoryRepo.deleteById(categoryid); return 0; }else return 1; }
+		 */
+
+//public void removeCategoryFromProduct(Long categoryid, Long productid) {
+//    Product product = productRepo.findById(productid)
+//            .orElseThrow();
+//
+//    Category category = product.getCategories().stream()
+//            .filter(r -> r.getCategoryid().equals(categoryid))
+//            .findFirst()
+//            .orElseThrow();
+//
+//    product.getCategories().remove(category);
+//    productRepo.save(product);
+//}
 
 public  List<CategoryDTO> getAllCategories(){
 	List<Category> categoryList=categoryRepo.findAll();	

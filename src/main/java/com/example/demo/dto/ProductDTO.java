@@ -10,6 +10,7 @@ public class ProductDTO {
 	private Integer type;
 	private String created_at;
 	private String updated_at;
-	private Long categoryid;
+	private Long Categoryid;
+
 
 }

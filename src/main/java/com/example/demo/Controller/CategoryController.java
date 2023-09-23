@@ -38,11 +38,11 @@ public ResponseEntity<String>createcategory(@RequestBody CategoryDTO categorydto
 //	return new ResponseEntity<String>(HttpStatus.OK);
 //      }
 //to delete category
-@DeleteMapping("/deletecategory/{categoryid}")
-public String deleteCategory(@PathVariable("categoryid") Long categoryid,@PathVariable("productid") Long productid) {
-	categoryService.deleteCategoryById(categoryid);
-    return "Successfully Deleted";
-     }
+//@DeleteMapping("/deletecategory/{categoryid}/{productid}")
+//public String deleteCategory(@PathVariable("categoryid") Long categoryid,@PathVariable("productid") Long productid) {
+//	categoryService.removeCategoryFromProduct(categoryid, productid);
+//    return "Successfully Deleted";
+//     }
 //to get all category
 @GetMapping("/getallcategory")
 private List<CategoryDTO>getAllCategories(){
