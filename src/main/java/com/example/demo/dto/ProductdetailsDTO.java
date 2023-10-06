@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class ProductdetailsDTO {
 	
-	private Long productdetailsid;
+	private Long id;
 	private String created_at;
 	private String updated_at;
 	private Long productid;

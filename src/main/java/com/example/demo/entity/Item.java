@@ -6,33 +6,32 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Data
-@Table(name="item")
+@Getter
+@Setter
 public class Item {
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long itemid;
-	private float mrp;
-	private float discount;
-	private float price;
-	private String created_at;
-	private String updated_at;
-	
-	@OneToOne
-    @JoinColumn(name="productid")
-    private Product product;
-	
-	@OneToOne
-	@JoinColumn(name="brandid")
-	private Brand brand;
-	
-	
-	
+private Long id;
+private float mrp;
+private float discount;
+private float price;
+private String created_at;
+private String updated_at;
+
+@OneToOne
+@JoinColumn(name="productid",referencedColumnName="id")
+private Product product;
+
+
+@OneToOne
+@JoinColumn(name="brandid",referencedColumnName="id")
+private Brand brand;
+
 
 }

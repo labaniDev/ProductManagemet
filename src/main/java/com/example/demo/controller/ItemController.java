@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.CategoryDTO;
 import com.example.demo.dto.ItemDTO;
+import com.example.demo.dto.ProductDTO;
+import com.example.demo.entity.Item;
 import com.example.demo.service.ItemService;
 
 @RestController
@@ -26,14 +29,30 @@ public class ItemController {
 	ItemService itemService;
 	
 	@PostMapping("/additem")
-	public ResponseEntity<ItemDTO> addItem(@RequestBody ItemDTO itemDTO) {
-		itemService.addItem(itemDTO);
+	public ResponseEntity<ItemDTO> addItem(@RequestBody CategoryDTO categoryDTO) {
+		
+		itemService.addItem(categoryDTO);
+		
+		
 		return new ResponseEntity<ItemDTO>(HttpStatus.OK);
 	}
-	@GetMapping("/getAllItems")
-	public List<ItemDTO> getAllItems(){
-		return itemService.getAllItems();
+	@GetMapping("/getAllItems/{id}")
+	public List<ItemDTO> getAllItems(@PathVariable("id") Long id){
+		return itemService.getAllItems(id);
 	}
+	
+	@GetMapping("/getItemByProductId/{productid}")
+	public ItemDTO getProductByCategoryid(@PathVariable("productid") Long productid) {
+		
+		return itemService.getItemByProductId(productid); 
+	}
+	
+	@GetMapping("/getItemByItemId/{itemid}")
+	public ItemDTO getitemByitemid(@PathVariable("itemid") Long itemid) {
+		
+		return itemService.getItemByItemId(itemid);
+	}
+	
 	@PutMapping("/updateItem")
 	public ResponseEntity<ItemDTO> updateItem(@RequestBody ItemDTO itemDTO){
 		itemService.updateItem(itemDTO);

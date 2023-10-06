@@ -10,20 +10,23 @@ import javax.persistence.OneToOne;
 
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 public class Productdetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long productdetailsid;
+	private Long id;
 	private String created_at;
 	private String updated_at;
 
 	
-	@OneToOne
-    @JoinColumn(name="productid")
-    private Product product;
+//	@OneToOne
+//    @JoinColumn(name="productid",referencedColumnName="id")
+//    private Product product;
 
 	
 }
