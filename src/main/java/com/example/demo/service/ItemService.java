@@ -13,9 +13,12 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.CategoryDTO;
 import com.example.demo.dto.ItemDTO;
 import com.example.demo.entity.Brand;
+import com.example.demo.entity.Category;
 import com.example.demo.entity.Item;
 import com.example.demo.entity.Product;
+import com.example.demo.entity.Status;
 import com.example.demo.repository.BrandRepo;
+import com.example.demo.repository.CategoryRepo;
 import com.example.demo.repository.ItemRepo;
 import com.example.demo.repository.ProductRepo;
 import java.util.Set;
@@ -30,6 +33,8 @@ public class ItemService {
 	ProductRepo productRepo;
 	@Autowired
 	BrandRepo brandRepo;
+	@Autowired
+	CategoryRepo categoryRepo;
 	
 	public static final Logger LOGGER = LoggerFactory.getLogger(ItemService.class);
 	
@@ -43,11 +48,12 @@ public class ItemService {
 				
 				prd.getItems().stream().forEach(item->{
 					
-					Optional<Brand> brand=brandRepo.findById(item.getBrandid());
+					Optional<Brand> brand=brandRepo.findById(item.getBrand().getId());
 					if(product.isPresent()&&brand.isPresent()) {
 						Product products=product.get();
 						Brand brands=brand.get();
 						Item itm=new Item();
+						itm.setTitle(item.getTitle());
 						itm.setMrp(item.getMrp());
 						itm.setDiscount(item.getDiscount());
 						itm.setPrice(item.getPrice());
@@ -55,6 +61,7 @@ public class ItemService {
 						  LocalDateTime now = LocalDateTime.now(); 
 						  itm.setCreated_at(dtf.format(now));
 						  itm.setUpdated_at(dtf.format(now));
+						  itm.setStatus(Status.active);
 						  itm.setProduct(products);
 						  itm.setBrand(brands);
 						
@@ -120,43 +127,61 @@ public class ItemService {
 		return null;
 	  }
 	
-	public Item updateItem(ItemDTO itemDTO) {
-		try {
-		LOGGER.info("Update Item");
-			Optional<Item> itemlIST=itemRepo.findById(itemDTO.getItemid());
-		
-		if(itemlIST.isPresent()) {
-		  Item itemList=itemlIST.get();
-		  itemList.setMrp(itemDTO.getMrp());
-		  itemList.setDiscount(itemDTO.getDiscount());
-		  itemList.setPrice(itemDTO.getPrice());
-		    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-			  LocalDateTime now = LocalDateTime.now(); 
-			  itemList.setCreated_at(dtf.format(now));
-			  itemList.setUpdated_at(dtf.format(now));
-			  return itemRepo.save(itemList);
-		}
-		}catch(Exception ex) {
-			ex.printStackTrace();
-			LOGGER.error(ex.getMessage());
-		}
-		return null;
-	}
+//	public Item updateItem(CategoryDTO categoryDTO) {
+//		try {
+//		LOGGER.info("Update Item");
+//		Optional<Category> categoryOptional=categoryRepo.findById(categoryDTO.getId());
+//		if(categoryOptional.isPresent()) {
+//			Category category=categoryOptional.get();
+//		
+//			categoryDTO.getProducts().forEach(productDTO->{
+//				Optional<Product> productOptional=category.getProducts().stream().filter(prd-> prd.getId().equals(productDTO.getId())).findAny();
+//				if(productOptional.isPresent()) {
+//					Product product=productOptional.get();
+//					
+//			product.getItems().forEach(itemDTO->{
+//				Optional<Item> itemOptional=product.getItems().stream().filter(itm-> itm.getId().equals(itemDTO.getId())).findAny();
+//				if(itemOptional.isPresent()) {
+//					Item item=itemOptional.get();
+//					if(item.getBrand().getId().equals(category))
+//				}
+//			});		
+//				}
+//		if(itemlIST.isPresent()) {
+//		  Item itemList=itemlIST.get();
+//		  itemList.setTitle(itemDTO.getTitle());
+//		  itemList.setMrp(itemDTO.getMrp());
+//		  itemList.setDiscount(itemDTO.getDiscount());
+//		  itemList.setPrice(itemDTO.getPrice());
+//		    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+//			  LocalDateTime now = LocalDateTime.now(); 
+//			  itemList.setCreated_at(dtf.format(now));
+//			  itemList.setUpdated_at(dtf.format(now));
+//			  return itemRepo.save(itemList);
+//		}
+//		}catch(Exception ex) {
+//			ex.printStackTrace();
+//			LOGGER.error(ex.getMessage());
+//		}
+//		return null;
+//	}
 	
-	public int deleteItemById( Long itemid) {
+	public String inActiveItemById( Long id) {
 		try {
-		   LOGGER.info("Delete Item By id");
-		Optional<Item> item=itemRepo.findById(itemid);
-		if(item.isPresent()) {
-		itemRepo.deleteById(itemid);
-		  return 0;
-		}else
-		  return 1;
+		   LOGGER.info("Inactive Item By id");
+		Optional<Item> itemOptional=itemRepo.findById(id);
+		if(itemOptional.isPresent()) {
+		Item item=itemOptional.get();
+		item.setStatus(Status.inactive);
+		itemRepo.save(item);
+		  return "Item successfully marked as inactive";
+		}
 		  }catch(Exception ex) {
 			  ex.printStackTrace();
 				LOGGER.error(ex.getMessage());  
 		  }
-		return 2;
+		return "Item already iactivated";
+		
 	
 	
 

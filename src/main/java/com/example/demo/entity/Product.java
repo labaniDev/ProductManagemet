@@ -1,10 +1,7 @@
 package com.example.demo.entity;
-
-
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -13,26 +10,17 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-
 @Entity
 @Getter
 @Setter
 @Table(name="product")
 public class Product implements Serializable{
-	
-	
-	
 	/**
 	 * 
 	 */
@@ -47,9 +35,6 @@ public class Product implements Serializable{
 	private String updated_at;
 	@Enumerated(EnumType.STRING)
 	private Status status;
-	
-//	@OneToOne(mappedBy = "product",cascade = CascadeType.ALL, orphanRemoval = true)
-//   private Item  item;
 	
 //	@OneToOne(mappedBy = "product",cascade = CascadeType.ALL, orphanRemoval = true)
 //	private Productdetails productdetails;

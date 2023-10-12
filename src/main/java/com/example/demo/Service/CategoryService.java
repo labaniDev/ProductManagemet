@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.demo.dto.CategoryDTO;
 import com.example.demo.entity.Category;
+import com.example.demo.entity.Status;
 import com.example.demo.repository.CategoryRepo;
 import com.example.demo.repository.ProductRepo;
 @Service
@@ -34,6 +35,7 @@ public void createproduct(CategoryDTO categorydto){
 	  LocalDateTime now = LocalDateTime.now();  
 	 category.setCreated_at(dtf.format(now));
 	 category.setUpdated_at(dtf.format(now));
+	 category.setStatus(Status.active);
 	 categoryRepo.save(category);
      }catch(Exception ex) {
     	 ex.printStackTrace();
@@ -41,24 +43,41 @@ public void createproduct(CategoryDTO categorydto){
      }
      }
 	
-//public String updatecategory(CategoryDTO categorydto) {
-//	Optional <Category> categoryoptional = categoryRepo.findById(categorydto.getCategoryid());
-//	if(categoryoptional.isPresent()) {
-//		Category category=categoryoptional.get();
-//		category.setTitle(categorydto.getTitle());
-//		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-//		  LocalDateTime now = LocalDateTime.now();  
-//		 category.setUpdate_at(dtf.format(now));
-//		 categoryRepo.save(category);
-//		 return "update";
-//	  }return "not update";
-//   } 
+public String updatecategory(CategoryDTO categorydto) {
+	Optional <Category> categoryoptional = categoryRepo.findById(categorydto.getId());
+	if(categoryoptional.isPresent()) {
+		Category category=categoryoptional.get();
+		category.setTitle(categorydto.getTitle());
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+		  LocalDateTime now = LocalDateTime.now();  
+		 category.setCreated_at(dtf.format(now));
+		 category.setUpdated_at(dtf.format(now));
+		 categoryRepo.save(category);
+		 return "update";
+	  }return "not update";
+   } 
 
-		/*
-		 * public int deleteCategoryById(Long categoryid) { Optional<Category>
-		 * categoryList=categoryRepo.findById(categoryid); if(categoryList.isPresent())
-		 * { categoryRepo.deleteById(categoryid); return 0; }else return 1; }
-		 */
+		
+ public String inactiveCategoryById(Long categoryid) {
+	 
+     LOGGER.info("inactive Category by Id");
+     try {
+	 Optional<Category>categoryList=categoryRepo.findById(categoryid);
+	 if(categoryList.isPresent()) {
+		 Category category=categoryList.get();
+		 category.setStatus(Status.inactive);
+		 categoryRepo.save(category);
+	 return "Category Succesfully marked as inactive";
+	 }
+     } catch (Exception ex) {
+			ex.printStackTrace();
+			LOGGER.error(ex.getMessage());
+		}
+		return "Category is already inactive";
+	}
+
+ 
+		
 
 //public void removeCategoryFromProduct(Long categoryid, Long productid) {
 //    Product product = productRepo.findById(productid)

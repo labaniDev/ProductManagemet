@@ -12,14 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.demo.dto.CategoryDTO;
 import com.example.demo.dto.ProductDTO;
-import com.example.demo.entity.Product;
-import com.example.demo.entity.Status;
 import com.example.demo.service.ProductService;
 
 
@@ -35,46 +31,36 @@ public class ProductController {
 	//private static final Logger LOGGER = LoggerFactory.getLogger(ProductController.class);
 	
 	@PostMapping("/addProduct")
-	public ResponseEntity<String> addProduct(@RequestBody CategoryDTO categoryDTO) {
-		//LOGGER.info("===================inside API check ==================="); 
+	public ResponseEntity<String> addProduct(@RequestBody CategoryDTO categoryDTO) {   //add product by category 
 		productService.addProduct(categoryDTO);		
 		return  new ResponseEntity<String>(HttpStatus.CREATED);
-		
-			
+				
 	}
 	
+	@GetMapping("/getAllProduct/{id}")
+	public List<ProductDTO> getAllProduct(@PathVariable("id") Long id){     //To get all products by categoryId
+		return productService.getAllProduct(id);
+	}
 	
-//	@GetMapping("/getAllProduct")
-//	public List<Product> getAllProduct(){
-//		//LOGGER.info("===================inside API check ===================");
-//		return productService.getAllProduct();
-//	}
 	@GetMapping("/getActiveProducts/{id}")  
-	public List<ProductDTO> getActiveProducts(@PathVariable("id") Long id){
+	public List<ProductDTO> getActiveProducts(@PathVariable("id") Long id){  //to get the active products by categoryId
 		return productService.getActiveProducts(id);
 	}
-	@GetMapping("/getProductByid/{categoryid}")
-	public ProductDTO getProductByCategoryid(@PathVariable("categoryid") Long categoryid) {
-		
-		return productService.getProductByCategoryId(categoryid); 
-	}
-//	@GetMapping("/getProductByProductid/{productid}")
-//	public ProductDTO getProductByProductid(@PathVariable("productid") Long productid) {
-//		return productService.getProductByProductId(productid);
-//	}
+
+
 	@GetMapping("/getProductBytitle/{title}")
-	public ProductDTO getProductBytitle(@PathVariable("title") String title) {
+	public ProductDTO getProductBytitle(@PathVariable("title") String title) {  //get active product by  product title
 		return productService.getProductByProductName(title);
 	}
-	@PutMapping("/updateProduct")
-	public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO productDTO) {
-		productService.updateProduct(productDTO);
-		return new ResponseEntity<ProductDTO>(HttpStatus.OK);
+	@PutMapping("/updateProductByCategory")
+	public ResponseEntity<String> updateProductByCategory(@RequestBody CategoryDTO categoryDTO) {
+		productService.updateProductInCategories(categoryDTO);
+		return new ResponseEntity<String>(HttpStatus.OK);
 	}
-	@DeleteMapping("/delete/{productid}")
-	public ResponseEntity<String> deleteProduct(@PathVariable("productid") Long productid) {
-		 String delete =productService.deleteProduct(productid);
-		return new ResponseEntity<String>(delete,HttpStatus.OK);
+	@DeleteMapping("/inactiveProductById/{id}")
+	public String inactiveProductById(@PathVariable("id") Long id) {  //to inactive product by productId
+		 productService.inactiveProductById(id);
+		return "Product Successfully Marked As Inactive";
 	}
 	
 	

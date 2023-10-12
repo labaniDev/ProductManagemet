@@ -3,6 +3,7 @@ package com.example.demo.service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.BrandDTO;
 import com.example.demo.entity.Brand;
+import com.example.demo.entity.Status;
 import com.example.demo.repository.BrandRepo;
 
 @Service
@@ -33,6 +35,7 @@ public class BrandService {
 		  
 		  brand.setCreated_at(dtf.format(now));
 		  brand.setUpdated_at(dtf.format(now));
+		  brand.setStatus(Status.active);
 		  brandRepo.save(brand);
 		}catch(Exception ex) {
 			ex.printStackTrace();
@@ -53,4 +56,21 @@ public class BrandService {
 	}
 		return null;
 }
+	
+	public String iactiveBrandByid(Long id) {
+		try {
+			LOGGER.info("Inactive Brand By id");
+			Optional<Brand> brandOptional=brandRepo.findById(id);
+			if(brandOptional.isPresent()) {
+				Brand brand=brandOptional.get();
+				brand.setStatus(Status.inactive);
+				brandRepo.save(brand);
+				return "Brand Successfully marked as inactive";
+			}
+		}catch(Exception ex) {
+			ex.printStackTrace();
+			LOGGER.error(ex.getMessage());
+		}return "Brand already marked as inactive";
+	}
+	
 }

@@ -14,11 +14,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.demo.dto.CategoryDTO;
 import com.example.demo.dto.ItemDTO;
-import com.example.demo.dto.ProductDTO;
-import com.example.demo.entity.Item;
 import com.example.demo.service.ItemService;
 
 @RestController
@@ -53,16 +50,16 @@ public class ItemController {
 		return itemService.getItemByItemId(itemid);
 	}
 	
-	@PutMapping("/updateItem")
-	public ResponseEntity<ItemDTO> updateItem(@RequestBody ItemDTO itemDTO){
-		itemService.updateItem(itemDTO);
-		return new ResponseEntity<ItemDTO>(HttpStatus.OK);
-	}
+//	@PutMapping("/updateItemByProduct")
+//	public ResponseEntity<ItemDTO> updateItemByProduct(@RequestBody CategoryDTO categoryDTO){
+//		itemService.updateItem(categoryDTO);
+//		return new ResponseEntity<ItemDTO>(HttpStatus.OK);
+//	}
 	
-	@DeleteMapping("/deleteitem/{itemid}")
-	public String deleteitem(@PathVariable("itemid") Long itemid) {
-	itemService.deleteItemById(itemid);
-	    return "Successfully Deleted";
+	@DeleteMapping("/inactiveItem/{id}")
+	public String inactiveItem(@PathVariable("id") Long id) {
+	itemService.inActiveItemById(id);
+	    return "Item successfully marked as inactive";
 	     }
 
 }

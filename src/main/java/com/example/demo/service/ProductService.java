@@ -2,18 +2,15 @@ package com.example.demo.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
 import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.example.demo.dto.CategoryDTO;
 import com.example.demo.dto.ProductDTO;
 import com.example.demo.entity.Category;
@@ -31,11 +28,11 @@ public class ProductService {
 	@Autowired
 	CategoryRepo categoryRepo;
 
-	PropertyMap<ProductDTO, Product> skipModifiedFieldsMap = new PropertyMap<ProductDTO, Product>() {
-		protected void configure() {
-			skip().setCategories(null);
-		}
-	};
+//	PropertyMap<ProductDTO, Product> skipModifiedFieldsMap = new PropertyMap<ProductDTO, Product>() {
+//		protected void configure() {
+//			skip().setCategories(null);
+//		}
+//	};
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
 
@@ -43,70 +40,40 @@ public class ProductService {
 		try {
 			LOGGER.info("Adding product" + categoryDTO);
 
-			modelMapper.addMappings(skipModifiedFieldsMap);
-			//Product product = modelMapper.map(productDTO, Product.class);
-//			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-//			LocalDateTime now = LocalDateTime.now();
+			Optional<Category> category=categoryRepo.findById(categoryDTO.getId());
+			
+			if(category.isPresent()) {
+				
+				//modelMapper.addMappings(skipModifiedFieldsMap);
+				List<Product> products =  modelMapper.map(categoryDTO.getProducts(),new TypeToken<List<Product>>()  {}.getType());
+				
+				products.stream().forEach(prd->{
+					DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+					LocalDateTime now = LocalDateTime.now();
 
-//			product.setCreated_at(dtf.format(now));
-//			product.setUpdated_at(dtf.format(now));
-
-//		  Set<Category> categories=new HashSet<>();
-			//if (productDTO.getCategories() != null) {
-
-				Set<Category> categorySet = new HashSet<Category>();
-
-				categoryDTO.getProducts().stream().forEach(cate -> {
-					Optional<Category> productCategory = categoryRepo.findById(cate.getId());
-					if (productCategory.isPresent()) {
-						Product prod=new Product();
-						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-						LocalDateTime now = LocalDateTime.now();
-						prod.setCreated_at(dtf.format(now));
-						prod.setUpdated_at(dtf.format(now));
-						prod.setStatus(Status.active);
-						
-						productCategory.get().getProducts().add(prod);
-					}
-					
-					categoryRepo.save(productCategory.get());
+					prd.setCreated_at(dtf.format(now));
+					prd.setUpdated_at(dtf.format(now));
+					prd.setStatus(Status.active);
 				});
-			//}
-
+				
+				category.get().getProducts().addAll(products);
+				categoryRepo.save(category.get());
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			LOGGER.error(ex.getMessage());
-
 		}
 
 	}
 
-	public List<Product> getAllProduct() {
-		//try {
-			LOGGER.info("Get All Product");
-			List<Product> products = productRepo.findAll();
-			//List<ProductDTO> productDTOList = modelMapper.map(products, new TypeToken<List<ProductDTO>>() {
-			//}.getType());
-			//for (ProductDTO dto : productDTOList) {
-			//dto.setCategories(modelMapper.map(products.stream().filter(prd -> prd.getId().equals(dto.getId()))
-				//	.findAny().get().getCategories(), new TypeToken<List<CategoryDTO>>() {
-					//	}.getType()));
-			//}
-			return products;
-		}// catch (Exception ex) {
-			//ex.printStackTrace();
-			//LOGGER.error(ex.getMessage());
-		//}
-		//return null;
-	//}
-
-	public ProductDTO getProductByCategoryId(Long categoryid) {
+	public List<ProductDTO> getAllProduct(Long id) {
 		try {
-			LOGGER.trace("Find Product By Categoryid");
-			Optional<Product> product = productRepo.findById(categoryid);
-			if (product.isPresent()) {
-				Product productdto = product.get();
-				ProductDTO productdtoList = modelMapper.map(productdto, ProductDTO.class);
+			LOGGER.info("Get All Product");
+			Optional<Category> productCategory=categoryRepo.findById(id);
+			if(productCategory.isPresent()) {
+				Category category=productCategory.get();
+				Set<Product> products=category.getProducts();
+				List<ProductDTO> productdtoList=modelMapper.map(products,new TypeToken<List<ProductDTO>>() {}.getType() );
 				return productdtoList;
 			}
 		} catch (Exception ex) {
@@ -115,20 +82,8 @@ public class ProductService {
 		}
 		return null;
 	}
-//  public ProductDTO getProductByProductId(Long Productid) {
-//	  try {
-//	  LOGGER.info("FIND Product By productid");
-//	  Optional<Product> productOptional=productRepo.findById(Productid);
-//	  if(productOptional.isPresent()) {
-//		  Product productdto=productOptional.get();
-//		  ProductDTO productDTOlist=modelMapper.map(productdto,ProductDTO.class);
-//		  return productDTOlist;
-//	  }}catch(Exception ex) {
-//		  ex.printStackTrace();
-//		  LOGGER.error(ex.getMessage());
-//	  }
-//	return null;
-//  }
+
+
 
 	public List<ProductDTO> getActiveProducts(Long id) {
 		try {
@@ -164,33 +119,51 @@ public class ProductService {
 		return null;
 	}
 
-	public Product updateProduct(ProductDTO productDTO) {
+	public void updateProductInCategories(CategoryDTO categoryDTO) {
 		try {
 			LOGGER.info("Update Product");
-			Optional<Product> productOptional = productRepo.findById(productDTO.getId());
+			Optional<Category> productCategory = categoryRepo.findById(categoryDTO.getId());
 
-			if (productOptional.isPresent()) {
-				Product newProduct = productOptional.get();
-				newProduct.setTitle(productDTO.getTitle());
-				newProduct.setDescription(productDTO.getDescription());
+			if (productCategory.isPresent()) {
+				Category category=productCategory.get();
 				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-				LocalDateTime now = LocalDateTime.now();
-
-				newProduct.setCreated_at(dtf.format(now));
-				newProduct.setUpdated_at(dtf.format(now));
-				return productRepo.save(newProduct);
+	            LocalDateTime now = LocalDateTime.now();
+				Set<Product> productSet=category.getProducts();
+				List<Product> productList =  modelMapper.map(categoryDTO.getProducts(),new TypeToken<List<Product>>()  {}.getType());
+				
+				
+				categoryDTO.getProducts().forEach(productDTO->{
+					
+					Optional<Product> product=category.getProducts().stream().filter(prd-> prd.getId().equals(productDTO.getId())).findAny();
+					
+					product.get().setDescription(productDTO.getDescription());
+					product.get().setTitle(productDTO.getTitle());
+					product.get().setUpdated_at(dtf.format(now));
+				});
+				
+				categoryRepo.save(category);
+				
+//				productList.forEach(productSets -> {
+//					productSet.stream()
+//		                        .filter(productLists -> productSets.getId().equals(productLists.getId()))
+//		                        .findFirst()
+//		                        .ifPresent(updatedProduct -> {
+//		                        	productSets.setUpdated_at(dtf.format(now));
+//		                        	productSets.setCreated_at(dtf.format(now));
+//		                        });
+//		            });categoryRepo.save(category);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			LOGGER.error(ex.getMessage());
 		}
-		return null;
+		
 	}
 
-	public String deleteProduct(Long productid) {
+	public String inactiveProductById(Long id) {
 		try {
 			LOGGER.info("Get Inactive Products");
-			Optional<Product> productOptional = productRepo.findById(productid);
+			Optional<Product> productOptional = productRepo.findById(id);
 			if (productOptional.isPresent()) {
 				Product product = productOptional.get();
 
