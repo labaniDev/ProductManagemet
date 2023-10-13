@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,25 +23,34 @@ import com.example.demo.service.ProductService;
 
 @RestController
 @RequestMapping("/api/product")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*",allowedHeaders = "*")
 public class ProductController {
 	
 	
 	@Autowired
 	ProductService productService;
 	
-	//private static final Logger LOGGER = LoggerFactory.getLogger(ProductController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProductController.class);
 	
 	@PostMapping("/addProduct")
-	public ResponseEntity<String> addProduct(@RequestBody CategoryDTO categoryDTO) {   //add product by category 
+	public String addProduct(@RequestBody CategoryDTO categoryDTO) { //add product by category 
+		if (categoryDTO.getId() == null) {
+            LOGGER.error("Category ID is required to add products.");
+            return "give the categoryid"; 
+        }
+
 		productService.addProduct(categoryDTO);		
-		return  new ResponseEntity<String>(HttpStatus.CREATED);
+		return  "Product Added Successfully";
 				
 	}
 	
 	@GetMapping("/getAllProduct/{id}")
 	public List<ProductDTO> getAllProduct(@PathVariable("id") Long id){     //To get all products by categoryId
 		return productService.getAllProduct(id);
+	}
+	@GetMapping("/getAllProduct")
+	public List<ProductDTO> getAllProducts(){
+		return productService.getAllProducts();
 	}
 	
 	@GetMapping("/getActiveProducts/{id}")  

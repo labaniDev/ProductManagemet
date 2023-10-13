@@ -2,9 +2,12 @@ package com.example.demo.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
@@ -12,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.demo.dto.CategoryDTO;
+import com.example.demo.dto.ItemDTO;
 import com.example.demo.dto.ProductDTO;
 import com.example.demo.entity.Category;
 import com.example.demo.entity.Product;
@@ -39,6 +43,11 @@ public class ProductService {
 	public void addProduct(CategoryDTO categoryDTO) {
 		try {
 			LOGGER.info("Adding product" + categoryDTO);
+			
+			if (categoryDTO.getId() == null) {
+	            LOGGER.error("Category ID is required to add products.");
+	            return; 
+	        }
 
 			Optional<Category> category=categoryRepo.findById(categoryDTO.getId());
 			
@@ -81,6 +90,23 @@ public class ProductService {
 			LOGGER.error(ex.getMessage());
 		}
 		return null;
+	}
+	public List<ProductDTO> getAllProducts(){
+		try {
+			LOGGER.info("Get All Products");  
+			List<Product> products=productRepo.findAll();
+			
+			List<ProductDTO> productDTOlist = products.stream()
+	                .filter(product -> product.getStatus() == Status.active)
+	                .map(product -> modelMapper.map(product, ProductDTO.class))
+	                .collect(Collectors.toList());
+
+	        return productDTOlist;
+			
+	}catch (Exception ex) {
+        ex.printStackTrace();
+        LOGGER.error(ex.getMessage());
+        return Collections.emptyList();}
 	}
 
 
@@ -128,30 +154,14 @@ public class ProductService {
 				Category category=productCategory.get();
 				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 	            LocalDateTime now = LocalDateTime.now();
-				Set<Product> productSet=category.getProducts();
-				List<Product> productList =  modelMapper.map(categoryDTO.getProducts(),new TypeToken<List<Product>>()  {}.getType());
-				
-				
 				categoryDTO.getProducts().forEach(productDTO->{
-					
 					Optional<Product> product=category.getProducts().stream().filter(prd-> prd.getId().equals(productDTO.getId())).findAny();
-					
 					product.get().setDescription(productDTO.getDescription());
 					product.get().setTitle(productDTO.getTitle());
 					product.get().setUpdated_at(dtf.format(now));
 				});
 				
 				categoryRepo.save(category);
-				
-//				productList.forEach(productSets -> {
-//					productSet.stream()
-//		                        .filter(productLists -> productSets.getId().equals(productLists.getId()))
-//		                        .findFirst()
-//		                        .ifPresent(updatedProduct -> {
-//		                        	productSets.setUpdated_at(dtf.format(now));
-//		                        	productSets.setCreated_at(dtf.format(now));
-//		                        });
-//		            });categoryRepo.save(category);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

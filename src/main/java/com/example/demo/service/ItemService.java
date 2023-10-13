@@ -1,6 +1,7 @@
 package com.example.demo.service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.modelmapper.ModelMapper;
@@ -22,6 +23,7 @@ import com.example.demo.repository.CategoryRepo;
 import com.example.demo.repository.ItemRepo;
 import com.example.demo.repository.ProductRepo;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemService {
@@ -41,7 +43,7 @@ public class ItemService {
 	
 	public void addItem(CategoryDTO categoryDTO) {
 		try {
-			LOGGER.info("Add Item");
+			LOGGER.info("Add Item");                     // To add item by categoryId,productId,BrandId
 			
 			categoryDTO.getProducts().stream().forEach(prd->{
 				Optional<Product> product=productRepo.findById(prd.getId());
@@ -78,7 +80,7 @@ public class ItemService {
 
 	public List<ItemDTO> getAllItems(Long id){
 		try {
-			LOGGER.info("Get All Items");
+			LOGGER.info("Get All Items By ProductId");     //To get Item by ProductId
 			Optional<Product> productOptional=productRepo.findById(id);
 			if(productOptional.isPresent()) {
 				Product product=productOptional.get();
@@ -92,79 +94,72 @@ public class ItemService {
 				return null;
 			}
 			
-			
+	public List<ItemDTO> getAllItems()	{
+		try {
+			LOGGER.info("Get All Items");                 //To get All Active Items
+			List<Item> itemList=itemRepo.findAll();
+			List<ItemDTO> ItemDTOlist = itemList.stream()
+	                .filter(item -> item.getStatus() == Status.active)
+	                .map(item -> modelMapper.map(item, ItemDTO.class))
+	                .collect(Collectors.toList());
+
+	        return ItemDTOlist;
+		}catch (Exception ex) {
+	        ex.printStackTrace();
+	        LOGGER.error(ex.getMessage());
+	        return Collections.emptyList();}
+	}
 		
 	
-	public ItemDTO getItemByItemId(Long itemid) {
-		try {
-			LOGGER.info("Update Item");
-		Optional<Item> item=itemRepo.findById(itemid);
-		if(item.isPresent()) {
-			Item itemdto=item.get();
-			ItemDTO productItem= modelMapper.map(itemdto,ItemDTO.class);
-			return productItem;
-			
-		}}catch(Exception ex) {
-			ex.printStackTrace();
-			LOGGER.error(ex.getMessage());
-		}
-		return null;
-	}
-	
-	public ItemDTO  getItemByProductId(Long productid) {
-		try {
-			LOGGER.info("Get item by productid");
-		 Optional<Item> item=itemRepo.findById(productid);
-		 if(item.isPresent()) {
-			 Item  itemdto=item.get();
-			 ItemDTO itemdtoList= modelMapper.map(itemdto,ItemDTO.class);
-			return itemdtoList;
-		 }
-		}catch(Exception ex) {
-			ex.printStackTrace();
-			LOGGER.error(ex.getMessage());
-		}
-		return null;
-	  }
-	
-//	public Item updateItem(CategoryDTO categoryDTO) {
+//	public ItemDTO getItemByItemId(Long itemid) {
 //		try {
-//		LOGGER.info("Update Item");
-//		Optional<Category> categoryOptional=categoryRepo.findById(categoryDTO.getId());
-//		if(categoryOptional.isPresent()) {
-//			Category category=categoryOptional.get();
-//		
-//			categoryDTO.getProducts().forEach(productDTO->{
-//				Optional<Product> productOptional=category.getProducts().stream().filter(prd-> prd.getId().equals(productDTO.getId())).findAny();
-//				if(productOptional.isPresent()) {
-//					Product product=productOptional.get();
-//					
-//			product.getItems().forEach(itemDTO->{
-//				Optional<Item> itemOptional=product.getItems().stream().filter(itm-> itm.getId().equals(itemDTO.getId())).findAny();
-//				if(itemOptional.isPresent()) {
-//					Item item=itemOptional.get();
-//					if(item.getBrand().getId().equals(category))
-//				}
-//			});		
-//				}
-//		if(itemlIST.isPresent()) {
-//		  Item itemList=itemlIST.get();
-//		  itemList.setTitle(itemDTO.getTitle());
-//		  itemList.setMrp(itemDTO.getMrp());
-//		  itemList.setDiscount(itemDTO.getDiscount());
-//		  itemList.setPrice(itemDTO.getPrice());
-//		    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-//			  LocalDateTime now = LocalDateTime.now(); 
-//			  itemList.setCreated_at(dtf.format(now));
-//			  itemList.setUpdated_at(dtf.format(now));
-//			  return itemRepo.save(itemList);
-//		}
-//		}catch(Exception ex) {
+//			LOGGER.info("Update Item");
+//		Optional<Item> item=itemRepo.findById(itemid);
+//		if(item.isPresent()) {
+//			Item itemdto=item.get();
+//			ItemDTO productItem= modelMapper.map(itemdto,ItemDTO.class);
+//			return productItem;
+//			
+//		}}catch(Exception ex) {
 //			ex.printStackTrace();
 //			LOGGER.error(ex.getMessage());
 //		}
 //		return null;
 //	}
+	
+	public void updateItem(CategoryDTO categoryDTO) {
+		try {
+		LOGGER.info("Update Item");
+		Optional<Category> categoryOptional=categoryRepo.findById(categoryDTO.getId());
+		if(categoryOptional.isPresent()) {
+			Category category=categoryOptional.get();
+		
+			categoryDTO.getProducts().forEach(productDTO->{
+				Optional<Product> productOptional=category.getProducts().stream().filter(prd-> prd.getId().equals(productDTO.getId())).findAny();
+				if(productOptional.isPresent()) {
+					Product product=productOptional.get();
+					LOGGER.info("Product found: " + product.getTitle());
+					
+			product.getItems().forEach(itemDTO->{
+				Optional<Item> itemOptional=product.getItems().stream().filter(itm-> itm.getId().equals(itemDTO.getId())).findAny();
+				if(itemOptional.isPresent()) {
+					Item item=itemOptional.get();
+	
+						item.setMrp(itemDTO.getMrp());
+						item.setPrice(itemDTO.getPrice());
+						item.setDiscount(itemDTO.getDiscount());
+						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+			            LocalDateTime now = LocalDateTime.now();
+			            item.setUpdated_at(dtf.format(now));
+			            itemRepo.save(item);
+					}
+				}
+			);	
+				}});}}catch(Exception ex) {
+			ex.printStackTrace();
+			LOGGER.error(ex.getMessage());
+		}
+	}
 	
 	public String inActiveItemById( Long id) {
 		try {

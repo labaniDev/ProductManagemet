@@ -38,23 +38,17 @@ public class ItemController {
 		return itemService.getAllItems(id);
 	}
 	
-	@GetMapping("/getItemByProductId/{productid}")
-	public ItemDTO getProductByCategoryid(@PathVariable("productid") Long productid) {
-		
-		return itemService.getItemByProductId(productid); 
+	@GetMapping("/getAllItems")
+	public List<ItemDTO> getAllItems(){
+		return itemService.getAllItems();
 	}
 	
-	@GetMapping("/getItemByItemId/{itemid}")
-	public ItemDTO getitemByitemid(@PathVariable("itemid") Long itemid) {
-		
-		return itemService.getItemByItemId(itemid);
-	}
 	
-//	@PutMapping("/updateItemByProduct")
-//	public ResponseEntity<ItemDTO> updateItemByProduct(@RequestBody CategoryDTO categoryDTO){
-//		itemService.updateItem(categoryDTO);
-//		return new ResponseEntity<ItemDTO>(HttpStatus.OK);
-//	}
+	@PutMapping("/updateItemByProduct")
+	public ResponseEntity<ItemDTO> updateItemByProduct(@RequestBody CategoryDTO categoryDTO){
+		itemService.updateItem(categoryDTO);
+		return new ResponseEntity<ItemDTO>(HttpStatus.OK);
+	}
 	
 	@DeleteMapping("/inactiveItem/{id}")
 	public String inactiveItem(@PathVariable("id") Long id) {
