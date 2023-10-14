@@ -20,7 +20,7 @@ import com.example.demo.service.ItemService;
 
 @RestController
 @RequestMapping("/api/item")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*",allowedHeaders = "*")
 public class ItemController {
 	@Autowired
 	ItemService itemService;
@@ -31,7 +31,7 @@ public class ItemController {
 		itemService.addItem(categoryDTO);
 		
 		
-		return new ResponseEntity<ItemDTO>(HttpStatus.OK);
+		return new ResponseEntity<ItemDTO>(HttpStatus.CREATED);
 	}
 	@GetMapping("/getAllItems/{id}")
 	public List<ItemDTO> getAllItems(@PathVariable("id") Long id){
