@@ -44,13 +44,17 @@ public class ItemService {
 	public void addItem(CategoryDTO categoryDTO) {
 		try {
 			LOGGER.info("Add Item");                     // To add item by categoryId,productId,BrandId
-			
+			Optional<Category> categoryOptional=categoryRepo.findById(categoryDTO.getId());
+			if(categoryOptional.isPresent()) {
+				Category category=categoryOptional.get();
+			}
 			categoryDTO.getProducts().stream().forEach(prd->{
 				Optional<Product> product=productRepo.findById(prd.getId());
 				
 				prd.getItems().stream().forEach(item->{
-					
+					if (item.getBrand() != null && item.getBrand().getId() != null) {
 					Optional<Brand> brand=brandRepo.findById(item.getBrand().getId());
+					LOGGER.info("brandid:"+item.getBrand().getId());
 					if(product.isPresent()&&brand.isPresent()) {
 						Product products=product.get();
 						Brand brands=brand.get();
@@ -68,6 +72,7 @@ public class ItemService {
 						  itm.setBrand(brands);
 						
 						itemRepo.save(itm);
+					}
 					}
 				});
 			});
@@ -140,14 +145,19 @@ public class ItemService {
 					Product product=productOptional.get();
 					LOGGER.info("Product found: " + product.getTitle());
 					
-			product.getItems().forEach(itemDTO->{
+				productDTO.getItems().forEach(itemDTO->{
 				Optional<Item> itemOptional=product.getItems().stream().filter(itm-> itm.getId().equals(itemDTO.getId())).findAny();
+				
 				if(itemOptional.isPresent()) {
 					Item item=itemOptional.get();
-	
+					LOGGER.info("Item id: " +item.getId());
+					LOGGER.info("Before Update - MRP: " + item.getMrp() + ", Price: " + item.getPrice() + ", Discount: " + item.getDiscount()+item.getTitle());
+	                LOGGER.info("After Update - title: "+itemDTO.getTitle());
 						item.setMrp(itemDTO.getMrp());
 						item.setPrice(itemDTO.getPrice());
 						item.setDiscount(itemDTO.getDiscount());
+						item.setTitle(itemDTO.getTitle());
+						LOGGER.info(itemDTO.getTitle());
 						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 			            LocalDateTime now = LocalDateTime.now();
 			            item.setUpdated_at(dtf.format(now));

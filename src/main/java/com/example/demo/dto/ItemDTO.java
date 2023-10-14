@@ -16,6 +16,7 @@ public class ItemDTO {
 	private Status status;
 	private String created_at;
 	private String updated_at;
+	
 	private BrandDTO brand;
 	
 
