@@ -45,6 +45,7 @@ public class ItemService {
 		try {
 			LOGGER.info("Add Item");                     // To add item by categoryId,productId,BrandId
 			Optional<Category> categoryOptional=categoryRepo.findById(categoryDTO.getId());
+			LOGGER.error("Give Correct CategoryId"+categoryDTO.getId());
 			if(categoryOptional.isPresent()) {
 				Category category=categoryOptional.get();
 			}
@@ -52,10 +53,9 @@ public class ItemService {
 				Optional<Product> product=productRepo.findById(prd.getId());
 				
 				prd.getItems().stream().forEach(item->{
-					if (item.getBrand() != null && item.getBrand().getId() != null) {
 					Optional<Brand> brand=brandRepo.findById(item.getBrand().getId());
 					LOGGER.info("brandid:"+item.getBrand().getId());
-					if(product.isPresent()&&brand.isPresent()) {
+					if(product.isPresent()&& brand.isPresent()) {
 						Product products=product.get();
 						Brand brands=brand.get();
 						Item itm=new Item();
@@ -70,9 +70,7 @@ public class ItemService {
 						  itm.setStatus(Status.active);
 						  itm.setProduct(products);
 						  itm.setBrand(brands);
-						
 						itemRepo.save(itm);
-					}
 					}
 				});
 			});
