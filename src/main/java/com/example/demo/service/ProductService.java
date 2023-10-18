@@ -91,6 +91,8 @@ public class ProductService {
 		}
 		return null;
 	}
+	
+//	public ProductResponseDTO 
 	public List<ProductDTO> getAllProducts(){
 		try {
 			LOGGER.info("Get All Products");  

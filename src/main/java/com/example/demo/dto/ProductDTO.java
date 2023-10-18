@@ -14,6 +14,7 @@ public class ProductDTO {
 	private String created_at;
 	private String updated_at;
 	private Status status;
+   // private Set<Category> categories;
 	private Set<ItemDTO> items;
 
 

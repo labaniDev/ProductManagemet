@@ -20,7 +20,7 @@ import com.example.demo.service.ItemService;
 
 @RestController
 @RequestMapping("/api/item")
-@CrossOrigin(origins = "*",allowedHeaders = "*")
+@CrossOrigin(origins = "http://localhost:3000",allowedHeaders = "*")
 public class ItemController {
 	@Autowired
 	ItemService itemService;

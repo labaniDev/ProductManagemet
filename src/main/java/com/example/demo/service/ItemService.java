@@ -145,9 +145,13 @@ public class ItemService {
 					
 				productDTO.getItems().forEach(itemDTO->{
 				Optional<Item> itemOptional=product.getItems().stream().filter(itm-> itm.getId().equals(itemDTO.getId())).findAny();
+				Optional<Brand> brandOptional=brandRepo.findById(itemDTO.getBrand().getId());
+	
 				
-				if(itemOptional.isPresent()) {
+				if(itemOptional.isPresent()&& brandOptional.isPresent()) {
 					Item item=itemOptional.get();
+					Brand newBrand=brandOptional.get();
+					
 					LOGGER.info("Item id: " +item.getId());
 					LOGGER.info("Before Update - MRP: " + item.getMrp() + ", Price: " + item.getPrice() + ", Discount: " + item.getDiscount()+item.getTitle());
 	                LOGGER.info("After Update - title: "+itemDTO.getTitle());
@@ -159,15 +163,18 @@ public class ItemService {
 						DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 			            LocalDateTime now = LocalDateTime.now();
 			            item.setUpdated_at(dtf.format(now));
+			            item.setBrand(newBrand);
+			            item.setProduct(product);
 			            itemRepo.save(item);
-					}
-				}
-			);	
-				}});}}catch(Exception ex) {
+				 }
+                });
+            }
+        });
+    }}catch(Exception ex) {
 			ex.printStackTrace();
-			LOGGER.error(ex.getMessage());
+			LOGGER.error(ex.getMessage());}
 		}
-	}
+	
 	
 	public String inActiveItemById( Long id) {
 		try {
