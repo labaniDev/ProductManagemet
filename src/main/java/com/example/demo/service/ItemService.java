@@ -130,21 +130,11 @@ public class ItemService {
 //		return null;
 //	}
 	
-	public void updateItem(CategoryDTO categoryDTO) {
+	public void updateItem(ItemDTO itemDTO) {
 		try {
 		LOGGER.info("Update Item");
-		Optional<Category> categoryOptional=categoryRepo.findById(categoryDTO.getId());
-		if(categoryOptional.isPresent()) {
-			Category category=categoryOptional.get();
 		
-			categoryDTO.getProducts().forEach(productDTO->{
-				Optional<Product> productOptional=category.getProducts().stream().filter(prd-> prd.getId().equals(productDTO.getId())).findAny();
-				if(productOptional.isPresent()) {
-					Product product=productOptional.get();
-					LOGGER.info("Product found: " + product.getTitle());
-					
-				productDTO.getItems().forEach(itemDTO->{
-				Optional<Item> itemOptional=product.getItems().stream().filter(itm-> itm.getId().equals(itemDTO.getId())).findAny();
+				Optional<Item> itemOptional=itemRepo.findById(itemDTO.getId());
 				Optional<Brand> brandOptional=brandRepo.findById(itemDTO.getBrand().getId());
 	
 				
@@ -164,13 +154,11 @@ public class ItemService {
 			            LocalDateTime now = LocalDateTime.now();
 			            item.setUpdated_at(dtf.format(now));
 			            item.setBrand(newBrand);
-			            item.setProduct(product);
-			            itemRepo.save(item);
-				 }
-                });
-            }
-        });
+			            itemRepo.save(item); 
+        
     }}catch(Exception ex) {
+    	
+    	
 			ex.printStackTrace();
 			LOGGER.error(ex.getMessage());}
 		}
