@@ -3,6 +3,7 @@ package com.example.demo.dto;
 import java.util.Set;
 
 import com.example.demo.entity.Status;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,7 @@ public class CategoryDTO {
 	private String created_at ;
 	private String updated_at ;
 	private Status status;
+	@JsonIgnore
 	private Set<ProductDTO> products;
 	
 

@@ -10,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.CategoryDTO;
 import com.example.demo.dto.ItemDTO;
@@ -40,10 +43,10 @@ public class ItemService {
 	
 	public static final Logger LOGGER = LoggerFactory.getLogger(ItemService.class);
 	
-	
+	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.READ_COMMITTED)
 	public void addItem(CategoryDTO categoryDTO) {
 		try {
-			LOGGER.info("Add Item");                     // To add item by categoryId,productId,BrandId
+			LOGGER.debug("Inside addItem::"+categoryDTO.toString());         // To add item by categoryId,productId,BrandId
 			Optional<Category> categoryOptional=categoryRepo.findById(categoryDTO.getId());
 			LOGGER.error("Give Correct CategoryId"+categoryDTO.getId());
 			if(categoryOptional.isPresent()) {
@@ -71,12 +74,13 @@ public class ItemService {
 						  itm.setProduct(products);
 						  itm.setBrand(brands);
 						itemRepo.save(itm);
+						LOGGER.debug("Item added Successfully");
 					}
 				});
 			});
 		}catch(Exception ex) {
 			ex.printStackTrace();
-			LOGGER.error(ex.getMessage());
+			LOGGER.error("Exception in addItem::"+ex.getMessage());
 			
 		}
 	}
@@ -129,10 +133,10 @@ public class ItemService {
 //		}
 //		return null;
 //	}
-	
+	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.READ_COMMITTED)
 	public void updateItem(ItemDTO itemDTO) {
 		try {
-		LOGGER.info("Update Item");
+		LOGGER.debug("Inside UpdateItem::"+itemDTO.toString());
 		
 				Optional<Item> itemOptional=itemRepo.findById(itemDTO.getId());
 				Optional<Brand> brandOptional=brandRepo.findById(itemDTO.getBrand().getId());
@@ -155,13 +159,14 @@ public class ItemService {
 			            item.setUpdated_at(dtf.format(now));
 			            item.setBrand(newBrand);
 			            itemRepo.save(item); 
+			            LOGGER.debug("Item Updated Successfully");
         
     }}catch(Exception ex) {
     	
     	
 			ex.printStackTrace();
-			LOGGER.error(ex.getMessage());}
-		}
+			LOGGER.error("Exception in Update Item::"+ex.getMessage());}
+  		}
 	
 	
 	public String inActiveItemById( Long id) {
@@ -184,4 +189,12 @@ public class ItemService {
 	
 
 }
+	public void updateItemPrice(ItemDTO itemDTO) {
+		Optional<Item> itemOptional=itemRepo.findById(itemDTO.getId());
+		if(itemOptional.isPresent()) {
+			Item item=itemOptional.get();
+			item.setPrice(itemDTO.getPrice());
+			itemRepo.save(item);
+		}
+	}
 }

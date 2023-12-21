@@ -40,6 +40,7 @@ public class Product implements Serializable{
 //	private Productdetails productdetails;
 	
 	@OneToMany(mappedBy="product")
+	@JsonIgnore
     private Set<Item> items;
 	
 	@ManyToMany(mappedBy = "products",cascade = {

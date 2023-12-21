@@ -29,7 +29,7 @@ CategoryService categoryService;
 //to add category
 @PostMapping("/addcategory")	
 public ResponseEntity<String>createcategory(@RequestBody CategoryDTO categorydto){
-	categoryService.createproduct(categorydto);
+	categoryService.addCategory(categorydto);
 	return new ResponseEntity<String>(HttpStatus.CREATED);
       }
  //to update category

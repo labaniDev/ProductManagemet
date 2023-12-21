@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,10 +58,10 @@ public class ProductController {
 	}
 
 
-	@GetMapping("/getProductBytitle/{title}")
-	public ProductDTO getProductBytitle(@PathVariable("title") String title) {  //get active product by  product title
-		return productService.getProductByProductName(title);
-	}
+//	@GetMapping("/getProductBytitle/{title}")
+//	public String getProductBytitle(@PathVariable("title") String title) {  //get active product by  product title
+//		return productService.getProductByProductNameToJson(title);
+//	}
 	@PutMapping("/updateProductByCategory")
 	public ResponseEntity<String> updateProductByCategory(@RequestBody CategoryDTO categoryDTO) {
 		productService.updateProductInCategories(categoryDTO);
@@ -73,6 +72,10 @@ public class ProductController {
 		 productService.inactiveProductById(id);
 		return "Product Successfully Marked As Inactive";
 	}
+//	@GetMapping("/getProductWithCategories")
+//	public List<ProductResponseDTO> getProductWithCategories(){
+//		return productService.getAllProductsWithCategories();
+//	}
 	
 	
 

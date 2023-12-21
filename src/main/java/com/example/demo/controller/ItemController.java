@@ -44,9 +44,9 @@ public class ItemController {
 	}
 	
 	
-	@PutMapping("/updateItemByProduct")
-	public ResponseEntity<ItemDTO> updateItemByProduct(@RequestBody CategoryDTO categoryDTO){
-		itemService.updateItem(categoryDTO);
+	@PutMapping("/updateItem")
+	public ResponseEntity<ItemDTO> updateItem(@RequestBody ItemDTO itemDTO){
+		itemService.updateItem(itemDTO);
 		return new ResponseEntity<ItemDTO>(HttpStatus.OK);
 	}
 	
@@ -55,5 +55,11 @@ public class ItemController {
 	itemService.inActiveItemById(id);
 	    return "Item successfully marked as inactive";
 	     }
+	
+	@PutMapping("/updateItemPrice")
+	public ResponseEntity<ItemDTO> updateItemPrice(@RequestBody ItemDTO itemDTO) {
+		itemService.updateItemPrice(itemDTO);
+		return new ResponseEntity<ItemDTO>(HttpStatus.OK);
+	}
 
 }

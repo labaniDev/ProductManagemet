@@ -7,15 +7,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.dto.CategoryDTO;
-import com.example.demo.dto.ItemDTO;
 import com.example.demo.dto.ProductDTO;
 import com.example.demo.entity.Category;
 import com.example.demo.entity.Product;
@@ -39,10 +40,11 @@ public class ProductService {
 //	};
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
-
+	
+	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.READ_COMMITTED)
 	public void addProduct(CategoryDTO categoryDTO) {
 		try {
-			LOGGER.info("Adding product" + categoryDTO);
+			LOGGER.debug("Inside addProduct::"+categoryDTO.toString());
 			
 			if (categoryDTO.getId() == null) {
 	            LOGGER.error("Category ID is required to add products.");
@@ -67,10 +69,11 @@ public class ProductService {
 				
 				category.get().getProducts().addAll(products);
 				categoryRepo.save(category.get());
+				LOGGER.debug("Product Added Successfully");
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			LOGGER.error(ex.getMessage());
+			LOGGER.error("Exception in addProduct::"+ex.getMessage());
 		}
 
 	}
@@ -130,26 +133,28 @@ public class ProductService {
 		return null;
 	}
 
-	public ProductDTO getProductByProductName(String title) {
-		try {
-			LOGGER.info("Get Product By Product Name");
-			Product product = productRepo.findByTitleAndStatus(title, Status.active);
-			if (product != null) {
-				ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
-				return productDTO;
-			} else {
-				return null;
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			LOGGER.error(ex.getMessage());
-		}
-		return null;
-	}
-
+//	public String getProductByProductNameToJson(String title) {
+//	    try {
+//	        LOGGER.info("Get Product By Product Name");
+//	        Product product = productRepo.findByTitleAndStatus(title, Status.active);
+//	        
+//	        if (product != null) {
+//	            ObjectMapper objectMapper = new ObjectMapper();
+//	            String productJson = objectMapper.writeValueAsString(product);
+//	            return productJson;
+//	        } else {
+//	            return null;
+//	        }
+//	    } catch (JsonProcessingException ex) {
+//	        ex.printStackTrace();
+//	        LOGGER.error(ex.getMessage());
+//	    }
+//	    return null;
+//	}
+	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.READ_COMMITTED)
 	public void updateProductInCategories(CategoryDTO categoryDTO) {
 		try {
-			LOGGER.info("Update Product");
+			LOGGER.debug("Inside UpdateProduct::"+categoryDTO.toString());
 			Optional<Category> productCategory = categoryRepo.findById(categoryDTO.getId());
 
 			if (productCategory.isPresent()) {
@@ -164,10 +169,12 @@ public class ProductService {
 				});
 				
 				categoryRepo.save(category);
+				LOGGER.debug("Product Added Successfully");
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			LOGGER.error(ex.getMessage());
+			LOGGER.error("Exception in update Product::"+ex.getMessage());
+			
 		}
 		
 	}
@@ -186,8 +193,23 @@ public class ProductService {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			LOGGER.error(ex.getMessage());
-		}
+		}  
+		
 		return "Product not found";
 	}
+	
+//	public List<ProductResponseDTO> getAllProductsWithCategories() {
+//		LOGGER.info("Get Product With Categories");
+//		try {
+//	    List<Product> products = productRepo.findByStatus(Status.active);
+//	    List<ProductResponseDTO> productDTOList =  modelMapper.map(products,new TypeToken<List<ProductResponseDTO>>()  {}.getType());
+//		return productDTOList;
+//		}catch (Exception ex) {
+//			ex.printStackTrace();
+//			LOGGER.error(ex.getMessage());
+//		}
+//		return null;
+//	}
+//	
 
 }

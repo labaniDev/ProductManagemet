@@ -1,12 +1,18 @@
 package com.example.demo.dto;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import com.example.demo.entity.Status;
 
 import lombok.Data;
 @Data
-public class ProductDTO {
+public class ProductDTO implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	private Long id;
 	private String title;
@@ -14,7 +20,7 @@ public class ProductDTO {
 	private String created_at;
 	private String updated_at;
 	private Status status;
-   // private Set<Category> categories;
+    //private Set<CategoryDTO> categories;
 	private Set<ItemDTO> items;
 
 

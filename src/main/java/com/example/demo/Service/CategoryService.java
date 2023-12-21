@@ -10,6 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.example.demo.dto.CategoryDTO;
 import com.example.demo.entity.Category;
 import com.example.demo.entity.Status;
@@ -26,10 +30,10 @@ ModelMapper modelMapper;
 ProductRepo productRepo;
 
     public static final Logger LOGGER = LoggerFactory.getLogger(CategoryService.class);
-    
-public void createproduct(CategoryDTO categorydto){
+    @Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.READ_COMMITTED)   
+public void addCategory(CategoryDTO categorydto){
 	try {
-		LOGGER.info("Create Product");
+		LOGGER.debug("Inside addProduct::"+categorydto.toString());
 	Category category = modelMapper.map(categorydto,Category.class);
 	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 	  LocalDateTime now = LocalDateTime.now();  
@@ -37,13 +41,16 @@ public void createproduct(CategoryDTO categorydto){
 	 category.setUpdated_at(dtf.format(now));
 	 category.setStatus(Status.active);
 	 categoryRepo.save(category);
+	 LOGGER.debug("Category Added Successfully");
      }catch(Exception ex) {
     	 ex.printStackTrace();
-			LOGGER.error(ex.getMessage());
+			LOGGER.error("Exception in add Category::"+ex.getMessage());
      }
      }
-	
+    @Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.READ_COMMITTED) 
 public String updatecategory(CategoryDTO categorydto) {
+    	try {
+    		LOGGER.debug("Inside updateCategory::"+categorydto.toString());
 	Optional <Category> categoryoptional = categoryRepo.findById(categorydto.getId());
 	if(categoryoptional.isPresent()) {
 		Category category=categoryoptional.get();
@@ -54,7 +61,11 @@ public String updatecategory(CategoryDTO categorydto) {
 		 category.setUpdated_at(dtf.format(now));
 		 categoryRepo.save(category);
 		 return "update";
-	  }return "not update";
+	  }}catch(Exception ex) {
+	    	 ex.printStackTrace();
+				LOGGER.error("Exception in add Category::"+ex.getMessage());
+	     }
+    	return "not update";
    } 
 
 		

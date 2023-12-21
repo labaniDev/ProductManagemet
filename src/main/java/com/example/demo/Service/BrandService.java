@@ -11,6 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.BrandDTO;
 import com.example.demo.entity.Brand;
@@ -26,9 +29,10 @@ public class BrandService {
 
 	
 	 public static final Logger LOGGER = LoggerFactory.getLogger(BrandService.class);
+	 @Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.READ_COMMITTED)
 	public void addBrand(BrandDTO brandDTO) {
 		try {
-			LOGGER.info("Add Brand");
+			LOGGER.debug("Inside AddBrand::"+brandDTO.toString());
 		Brand brand=modelMapper.map(brandDTO, Brand.class);
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 		  LocalDateTime now = LocalDateTime.now(); 
@@ -37,9 +41,10 @@ public class BrandService {
 		  brand.setUpdated_at(dtf.format(now));
 		  brand.setStatus(Status.active);
 		  brandRepo.save(brand);
+		  LOGGER.debug("Brand Added Successfully");
 		}catch(Exception ex) {
 			ex.printStackTrace();
-			LOGGER.error(ex.getMessage());
+			LOGGER.error("Exception in add Category::"+ex.getMessage());
 		}
 		  
 	}
