@@ -28,13 +28,13 @@ CategoryService categoryService;
 
 //to add category
 @PostMapping("/addcategory")	
-public ResponseEntity<String>createcategory(@RequestBody CategoryDTO categorydto){
+public ResponseEntity<String> createcategory(@RequestBody CategoryDTO categorydto){
 	categoryService.addCategory(categorydto);
 	return new ResponseEntity<String>(HttpStatus.CREATED);
       }
  //to update category
 @PutMapping("/updatecategory")
-public ResponseEntity<String>updatecategory(@RequestBody CategoryDTO categorydto){
+public ResponseEntity<String> updatecategory(@RequestBody CategoryDTO categorydto){
 	categoryService.updatecategory(categorydto);
 	return new ResponseEntity<String>(HttpStatus.OK);
       }
@@ -46,7 +46,7 @@ public String inactiveCategory(@PathVariable("id") Long id) {
      }
 //to get all category
 @GetMapping("/getallcategory")
-private List<CategoryDTO>getAllCategories(){
+public List<CategoryDTO> getAllCategories(){
   return categoryService.getAllCategories();
      }
 //to get category by id
